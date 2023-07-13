@@ -1,0 +1,14 @@
+@import '../../assets/styles/variables.scss';
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-size: rem(13);
+}
+
+.main__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  font-size: rem(13);
+}

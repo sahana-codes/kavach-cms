@@ -1,0 +1,117 @@
+// Accent colors
+$default: #f4f5f7;
+$primary: #131415;
+$secondary: #131415;
+$success: #00875a;
+$info: #0887c9;
+$warning: #f39834;
+$danger: #ee6d53;
+$background: #f6f7fb;
+$scrollbar: #e4e9f0;
+// Colors
+$white: #fff;
+$black: #000000;
+$white: #fff;
+$blue: #08f;
+$orange: #f2a654;
+$yellow: yellow;
+// text
+$text: #131415;
+$subtext: rgba($text, 0.6);
+$text-light: $default;
+$text-dark: #131415;
+$gray: #7a869a;
+$gray-light: $default;
+$gray-dark: #131415;
+$gray-border: #e4e9f0;
+// header
+$header-bg: #E9FC88;
+$footer-bg: #f6f7fb;
+// Font Family
+$font-family: 'NeueHaasUnicaPro-Regular', sans-serif !important;
+
+// default animation speed
+$speed: 500ms;
+// Breakpoints
+$bp-small: 48em; // 768px
+$bp-medium: 64em; // 1024px
+$bp-large: 85.375em; // 1366px
+$bp-xlarge: 120em; // 1920px
+$bp-xxlarge: 160em; // 2560px
+// media queries
+$mq-small: '(min-width: #{$bp-small})';
+$mq-medium: '(min-width: #{$bp-medium})';
+$mq-large: '(min-width: #{$bp-large})';
+$mq-xlarge: '(min-width: #{$bp-xlarge})';
+$mq-xxlarge: '(min-width: #{$bp-xxlarge})';
+$mq-mw-small: '(max-width: #{$bp-small})';
+$mq-mw-medium: '(max-width: #{$bp-medium})';
+$mq-mw-large: '(max-width: #{$bp-large})';
+$mq-mw-xlarge: '(max-width: #{$bp-xlarge})';
+$mq-mw-xxlarge: '(max-width: #{$bp-xxlarge})';
+$mq-retina: '(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)';
+
+// Font-Size
+// $base-font-size: 1em; // 16px default
+// $base-font-size: 0.8125em; // 13px default
+$base-font-size: 0.625em; // 10px default
+// $base-font-size: 10px; // same fort sizing for every device
+
+// $base-font-size: 13px; // 10px base size
+
+$base-line-height: 1.6;
+$base__font-size: 10 !default; // note: change according to base-font-size
+// Convert value rem() sass mixin
+@function rem($px, $base: $base__font-size) {
+  $remValue: calc(($px / $base) * 1rem);
+  @return #{$remValue}; // Convert pixels to REMs
+  // Uncomment the line below to convert REMs to pixels
+  // @return #{$px}px;
+}
+@mixin fontSize($size) {
+  font-size: $size; //Fallback in px
+  font-size: rem($size);
+}
+
+// Line-Height
+$base-line-height: 1.5;
+$header-line-height: 1.25;
+
+$path: '../fonts/';
+$font: 'NeueHaasUnicaPro';
+$font-bold: $font + '-Bold';
+$font-regular: $font + '-Regular';
+$font-light: $font + '-Light';
+$font-sfui-bold: 'SF UI Text';
+
+@font-face {
+  font-family: $font-bold;
+  src: url($path + $font-bold + '.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: $font-regular;
+  src: url($path + $font-regular + '.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: $font-light;
+  src: url($path + $font-light + '.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: $font-sfui-bold;
+  src: url($path + 'SF-UI-Text-Bold.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
