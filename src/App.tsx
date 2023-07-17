@@ -1,9 +1,13 @@
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import AppRouter from './router/router';
 
-type Props = {};
-
-function App({}: Props) {
-  return <div>App</div>;
+function App() {
+  return (
+    <BrowserRouter>
+      <AppRouter />
+    </BrowserRouter>
+  );
 }
 
 export default App;
