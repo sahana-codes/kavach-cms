@@ -1,27 +1,21 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getCurrentAdmin, login } from '../../services/admin';
-import { adminLogin } from '../../store/adminSlice';
-import { useDispatch } from 'react-redux';
+import { Credentials } from '../login';
 import { validatePassword, validateUsername } from '../../utils/validators';
-
-export interface Credentials {
-  username: string;
-  password: string;
-  confirmPassword: string;
-}
-
-const Login: React.FC = () => {
+import { createNewAdmin, updateAdmin } from '../../services/admin';
+type Props = {
+  fetchAdmins: () => Promise<void>;
+  closeCreateForm: () => void;
+  usernameToUpdate?: string;
+};
+function AdminForm({ fetchAdmins, closeCreateForm, usernameToUpdate }: Props) {
   const [{ username, password, confirmPassword }, setCreds] =
     useState<Credentials>({
-      username: '',
+      username: usernameToUpdate || '',
       password: '',
       confirmPassword: '',
     });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError('');
@@ -44,28 +38,24 @@ const Login: React.FC = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleCreateorUpdateAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (error) {
-      return;
-    }
+    if (error) return;
+
     if (username && password) {
-      if (confirmPassword === password)
+      if (password === confirmPassword) {
+        const APIToCall = usernameToUpdate ? updateAdmin : createNewAdmin;
         try {
-          const { data } = await login(username, password);
+          const { data } = await APIToCall(username, password);
           if (data) {
-            const { data } = await getCurrentAdmin();
-            dispatch(adminLogin({ ...data.data }));
-            localStorage.setItem(
-              'currentAdmin',
-              JSON.stringify({ ...data.data })
-            );
-            navigate('/content');
+            setCreds({ username: '', password: '', confirmPassword: '' });
+            fetchAdmins();
+            closeCreateForm();
           }
         } catch (error: any) {
           setError(error.message);
         }
-      else setError('Passwords do not match');
+      } else setError('Passwords do not match');
     } else
       setError(
         username ? 'Password cannot be empty.' : 'Username cannot be empty.'
@@ -73,16 +63,19 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
+    <>
+      <button onClick={closeCreateForm}>Close X</button>
+      <form onSubmit={handleCreateorUpdateAdmin} autoComplete="off">
         <div>
           <label>Username:</label>
           <input
             type="text"
             name="username"
+            id="username"
             value={username}
             onChange={handleChange}
+            autoComplete="off"
+            readOnly={usernameToUpdate ? true : false}
           />
         </div>
         <div>
@@ -90,8 +83,10 @@ const Login: React.FC = () => {
           <input
             type={showPassword ? 'text' : 'password'}
             name="password"
+            id="password"
             value={password}
             onChange={handleChange}
+            autoComplete="off"
           />
           <button type="button" onClick={togglePasswordVisibility}>
             {showPassword ? 'Hide' : 'Show'}
@@ -102,8 +97,10 @@ const Login: React.FC = () => {
           <input
             type={showPassword ? 'text' : 'password'}
             name="confirmPassword"
+            id="confirmPassword"
             value={confirmPassword}
             onChange={handleChange}
+            autoComplete="off"
           />
           <button type="button" onClick={togglePasswordVisibility}>
             {showPassword ? 'Hide' : 'Show'}
@@ -112,8 +109,8 @@ const Login: React.FC = () => {
         {error && <div dangerouslySetInnerHTML={{ __html: error }} />}
         <button type="submit">Submit</button>
       </form>
-    </div>
+    </>
   );
-};
+}
 
-export default Login;
+export default AdminForm;

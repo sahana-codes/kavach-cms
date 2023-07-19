@@ -1,11 +1,5 @@
-import {
-  // createAsyncThunk,
-  createSlice,
-} from '@reduxjs/toolkit';
-import {
-  AppDispatch,
-  // RootState
-} from '.';
+import { createSlice } from '@reduxjs/toolkit';
+import { AppDispatch } from '.';
 
 interface Admin {
   _id?: string;
@@ -40,33 +34,7 @@ export const adminSlice = createSlice({
       state.isSuperAdmin = false;
     },
   },
-  // extraReducers: (builder) => {
-  //   builder.addCase(loadCurrentAdmin.fulfilled, (state, action) => {
-  //     const payload = action.payload as Admin | null;
-  //     if (payload) {
-  //       const { username, _id } = payload;
-  //       state.isSuperAdmin = username === 'kavach_superuser';
-  //       state.currentAdmin = { username, _id };
-  //     } else {
-  //       state.currentAdmin = null;
-  //     }
-  //   });
-  // },
 });
-
-// export const loadCurrentAdmin = createAsyncThunk<Admin | void>(
-//   'admin/loadCurrentAdmin',
-//   async (_, { dispatch }) => {
-//     const currentAdminData = localStorage.getItem('currentAdmin');
-//     if (currentAdminData) {
-//       const adminData = JSON.parse(currentAdminData) as Admin;
-//       dispatch(adminLogin(adminData));
-//     } else {
-//       // Clear the admin state if no admin data found in localStorage
-//       dispatch(adminLogout());
-//     }
-//   }
-// );
 
 export const logoutAdmin = () => {
   return (dispatch: AppDispatch) => {

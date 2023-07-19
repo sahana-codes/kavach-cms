@@ -1,16 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Column, useTable } from 'react-table';
-import { getAllAdmins } from '../../services/admin';
+import { deleteAdmin, getAllAdmins } from '../../services/admin';
 import Header from '../header';
+import { useSelector } from 'react-redux';
+import AdminForm from './adminForm';
 
 interface Admin {
   _id: string;
   username: string;
-  password: string;
 }
 
 const Admin: React.FC = () => {
   const [admins, setAdmins] = useState<Admin[]>([]);
+  const currentAdmin = useSelector((state: any) => state.admin.currentAdmin);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [usernameToUpdate, setUsernameToUpdate] = useState('');
 
   const columns: Array<Column<Admin>> = useMemo(
     () => [
@@ -23,16 +27,20 @@ const Admin: React.FC = () => {
         accessor: 'username',
       },
       {
-        Header: 'Password',
-        accessor: 'password',
-      },
-      {
         Header: 'Update',
-        Cell: () => <button>Update</button>,
+        Cell: ({ row }: any) => (
+          <button onClick={() => handleUpdateAdmin(row.original.username)}>
+            Update
+          </button>
+        ),
       },
       {
         Header: 'Delete',
-        Cell: () => <button>Delete</button>,
+        Cell: ({ row }: any) => (
+          <button onClick={() => handleDeleteAdmin(row.original.username)}>
+            Delete
+          </button>
+        ),
       },
     ],
     []
@@ -44,20 +52,56 @@ const Admin: React.FC = () => {
 
   const fetchAdmins = async () => {
     try {
-      const response = await getAllAdmins();
-      console.log(response);
-      // setAdmins(response.data); // Update the admins state with the received data
+      const { data } = await getAllAdmins();
+      const allAdmins = data.data;
+      const allOtherAdmins = allAdmins.filter(
+        (admin: Admin) => admin.username !== currentAdmin.username
+      );
+      setAdmins(allOtherAdmins);
     } catch (error) {
-      // Handle error
+      console.error('Error occurred while fetching admins:', error);
     }
   };
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data: admins });
 
+  const handleUpdateAdmin = (username: string) => {
+    setShowCreateForm(true);
+    setUsernameToUpdate(username);
+  };
+
+  const handleDeleteAdmin = async (username: string) => {
+    const shouldDelete = window.confirm(
+      `Are you sure you want to delete ${username}?`
+    );
+
+    if (shouldDelete) {
+      try {
+        const { data } = await deleteAdmin(username);
+        if (data) {
+          fetchAdmins();
+        }
+      } catch (error: any) {
+        console.error('Error occurred while deleting admin:', error);
+      }
+    }
+  };
+
   return (
     <>
       <Header />
+      <button onClick={() => setShowCreateForm(true)}>Create New Admin</button>
+      {showCreateForm && (
+        <AdminForm
+          fetchAdmins={fetchAdmins}
+          closeCreateForm={() => {
+            setShowCreateForm(false);
+            setUsernameToUpdate('');
+          }}
+          usernameToUpdate={usernameToUpdate}
+        />
+      )}
       <table {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (

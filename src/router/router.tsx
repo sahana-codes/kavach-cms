@@ -1,14 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Login from '../component/login';
 import NotFound from '../component/error/notFound';
 import Content from '../component/content';
 import Admin from '../component/admin';
+import { adminLogin } from '../store/adminSlice';
 
 const AppRouter: React.FC = () => {
   const currentAdmin = useSelector((state: any) => state.admin.currentAdmin);
   const isSuperAdmin = useSelector((state: any) => state.admin.isSuperAdmin);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const storedAdminData = localStorage.getItem('currentAdmin');
+    if (storedAdminData) {
+      const parsedAdminData = JSON.parse(storedAdminData);
+      dispatch(adminLogin(parsedAdminData));
+    }
+  }, [dispatch]);
 
   return (
     <Routes>
