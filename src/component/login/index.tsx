@@ -3,21 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { getCurrentAdmin, login } from '../../services/admin';
 import { adminLogin } from '../../store/adminSlice';
 import { useDispatch } from 'react-redux';
-import { validatePassword, validateUsername } from '../../utils/validators';
 
 export interface Credentials {
   username: string;
   password: string;
-  confirmPassword: string;
 }
 
 const Login: React.FC = () => {
-  const [{ username, password, confirmPassword }, setCreds] =
-    useState<Credentials>({
-      username: '',
-      password: '',
-      confirmPassword: '',
-    });
+  const [{ username, password }, setCreds] = useState<Credentials>({
+    username: '',
+    password: '',
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -30,14 +26,6 @@ const Login: React.FC = () => {
       ...prevCreds,
       [name]: value,
     }));
-
-    if (name === 'username') {
-      setError(validateUsername(value));
-    } else if (name === 'password') {
-      setError(validatePassword(value));
-    } else if (name === 'confirmPassword') {
-      setError(validatePassword(value));
-    }
   };
 
   const togglePasswordVisibility = () => {
@@ -50,22 +38,20 @@ const Login: React.FC = () => {
       return;
     }
     if (username && password) {
-      if (confirmPassword === password)
-        try {
-          const { data } = await login(username, password);
-          if (data) {
-            const { data } = await getCurrentAdmin();
-            dispatch(adminLogin({ ...data.data }));
-            localStorage.setItem(
-              'currentAdmin',
-              JSON.stringify({ ...data.data })
-            );
-            navigate('/content');
-          }
-        } catch (error: any) {
-          setError(error.message);
+      try {
+        const { data } = await login(username, password);
+        if (data) {
+          const { data } = await getCurrentAdmin();
+          dispatch(adminLogin({ ...data.data }));
+          localStorage.setItem(
+            'currentAdmin',
+            JSON.stringify({ ...data.data })
+          );
+          navigate('/content');
         }
-      else setError('Passwords do not match');
+      } catch (error: any) {
+        setError(error.message);
+      }
     } else
       setError(
         username ? 'Password cannot be empty.' : 'Username cannot be empty.'
@@ -91,18 +77,6 @@ const Login: React.FC = () => {
             type={showPassword ? 'text' : 'password'}
             name="password"
             value={password}
-            onChange={handleChange}
-          />
-          <button type="button" onClick={togglePasswordVisibility}>
-            {showPassword ? 'Hide' : 'Show'}
-          </button>
-        </div>
-        <div>
-          <label>Confirm Password:</label>
-          <input
-            type={showPassword ? 'text' : 'password'}
-            name="confirmPassword"
-            value={confirmPassword}
             onChange={handleChange}
           />
           <button type="button" onClick={togglePasswordVisibility}>

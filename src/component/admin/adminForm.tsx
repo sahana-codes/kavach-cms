@@ -2,19 +2,26 @@ import React, { useState } from 'react';
 import { Credentials } from '../login';
 import { validatePassword, validateUsername } from '../../utils/validators';
 import { createNewAdmin, updateAdmin } from '../../services/admin';
+
 type Props = {
   fetchAdmins: () => Promise<void>;
   closeCreateForm: () => void;
   usernameToUpdate?: string;
 };
+interface ExtendedCredentials extends Credentials {
+  confirmPassword: string;
+}
+
 function AdminForm({ fetchAdmins, closeCreateForm, usernameToUpdate }: Props) {
   const [{ username, password, confirmPassword }, setCreds] =
-    useState<Credentials>({
+    useState<ExtendedCredentials>({
       username: usernameToUpdate || '',
       password: '',
       confirmPassword: '',
     });
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
   const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,8 +41,14 @@ function AdminForm({ fetchAdmins, closeCreateForm, usernameToUpdate }: Props) {
     }
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
+  const togglePasswordVisibility = (field: 'password' | 'confirmPassword') => {
+    if (field === 'password') {
+      setShowPassword((prevShowPassword) => !prevShowPassword);
+    } else if (field === 'confirmPassword') {
+      setShowConfirmPassword(
+        (prevShowConfirmPassword) => !prevShowConfirmPassword
+      );
+    }
   };
 
   const handleCreateorUpdateAdmin = async (e: React.FormEvent) => {
@@ -88,22 +101,28 @@ function AdminForm({ fetchAdmins, closeCreateForm, usernameToUpdate }: Props) {
             onChange={handleChange}
             autoComplete="off"
           />
-          <button type="button" onClick={togglePasswordVisibility}>
+          <button
+            type="button"
+            onClick={() => togglePasswordVisibility('password')}
+          >
             {showPassword ? 'Hide' : 'Show'}
           </button>
         </div>
         <div>
           <label>Confirm Password:</label>
           <input
-            type={showPassword ? 'text' : 'password'}
+            type={showConfirmPassword ? 'text' : 'password'}
             name="confirmPassword"
             id="confirmPassword"
             value={confirmPassword}
             onChange={handleChange}
             autoComplete="off"
           />
-          <button type="button" onClick={togglePasswordVisibility}>
-            {showPassword ? 'Hide' : 'Show'}
+          <button
+            type="button"
+            onClick={() => togglePasswordVisibility('confirmPassword')}
+          >
+            {showConfirmPassword ? 'Hide' : 'Show'}
           </button>
         </div>
         {error && <div dangerouslySetInnerHTML={{ __html: error }} />}

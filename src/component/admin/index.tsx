@@ -4,6 +4,8 @@ import { deleteAdmin, getAllAdmins } from '../../services/admin';
 import Header from '../header';
 import { useSelector } from 'react-redux';
 import AdminForm from './adminForm';
+import Modal from '../modal';
+import AreYouSure from './areYouSure';
 
 interface Admin {
   _id: string;
@@ -14,7 +16,9 @@ const Admin: React.FC = () => {
   const [admins, setAdmins] = useState<Admin[]>([]);
   const currentAdmin = useSelector((state: any) => state.admin.currentAdmin);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [usernameToUpdate, setUsernameToUpdate] = useState('');
+  const [adminToDelete, setAdminToDelete] = useState('');
 
   const columns: Array<Column<Admin>> = useMemo(
     () => [
@@ -37,7 +41,12 @@ const Admin: React.FC = () => {
       {
         Header: 'Delete',
         Cell: ({ row }: any) => (
-          <button onClick={() => handleDeleteAdmin(row.original.username)}>
+          <button
+            onClick={() => {
+              setAdminToDelete(row.original.username);
+              setShowConfirmDelete(true);
+            }}
+          >
             Delete
           </button>
         ),
@@ -71,20 +80,15 @@ const Admin: React.FC = () => {
     setUsernameToUpdate(username);
   };
 
-  const handleDeleteAdmin = async (username: string) => {
-    const shouldDelete = window.confirm(
-      `Are you sure you want to delete ${username}?`
-    );
-
-    if (shouldDelete) {
-      try {
-        const { data } = await deleteAdmin(username);
-        if (data) {
-          fetchAdmins();
-        }
-      } catch (error: any) {
-        console.error('Error occurred while deleting admin:', error);
+  const handleDeleteAdmin = async () => {
+    try {
+      const { data } = await deleteAdmin(adminToDelete);
+      if (data) {
+        fetchAdmins();
+        setShowConfirmDelete(false);
       }
+    } catch (error: any) {
+      console.error('Error occurred while deleting admin:', error);
     }
   };
 
@@ -125,6 +129,15 @@ const Admin: React.FC = () => {
           })}
         </tbody>
       </table>
+      {showConfirmDelete && (
+        <Modal onClose={() => setShowConfirmDelete(false)}>
+          <AreYouSure
+            onCancel={() => setShowConfirmDelete(false)}
+            message={`Are you sure you want to delete ${adminToDelete}?`}
+            onConfirm={handleDeleteAdmin}
+          />
+        </Modal>
+      )}
     </>
   );
 };

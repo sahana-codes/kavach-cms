@@ -1,3 +1,5 @@
+import { ContentType } from '../component/content/addContent';
+
 export const validateUsername = (username: string) => {
   const trimmedUsername = username.trim();
 
@@ -29,4 +31,23 @@ export const validatePassword = (password: string) => {
         .map(({ name }) => name)
         .join(', ')}`
     : '';
+};
+
+export const validateContentDetails = (
+  title: string,
+  description: string,
+  contentType: ContentType,
+  readTime: string,
+  Key: string
+): boolean => {
+  if (
+    title.trim() === '' ||
+    description.trim() === '' ||
+    contentType === null ||
+    readTime.trim() === '' ||
+    Key.trim() === ''
+  ) {
+    return false;
+  }
+  return true;
 };
