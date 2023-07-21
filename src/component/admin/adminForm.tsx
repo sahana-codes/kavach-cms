@@ -3,8 +3,10 @@ import { Credentials } from '../login';
 import { validatePassword, validateUsername } from '../../utils/validators';
 import { createNewAdmin, updateAdmin } from '../../services/admin';
 
+import { fetchAllAdmins } from '../../store/adminSlice';
+import { useDispatch } from 'react-redux';
+
 type Props = {
-  fetchAdmins: () => Promise<void>;
   closeCreateForm: () => void;
   usernameToUpdate?: string;
 };
@@ -12,7 +14,7 @@ interface ExtendedCredentials extends Credentials {
   confirmPassword: string;
 }
 
-function AdminForm({ fetchAdmins, closeCreateForm, usernameToUpdate }: Props) {
+function AdminForm({ closeCreateForm, usernameToUpdate }: Props) {
   const [{ username, password, confirmPassword }, setCreds] =
     useState<ExtendedCredentials>({
       username: usernameToUpdate || '',
@@ -23,6 +25,7 @@ function AdminForm({ fetchAdmins, closeCreateForm, usernameToUpdate }: Props) {
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
   const [error, setError] = useState('');
+  const dispatch = useDispatch();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError('');
@@ -62,7 +65,7 @@ function AdminForm({ fetchAdmins, closeCreateForm, usernameToUpdate }: Props) {
           const { data } = await APIToCall(username, password);
           if (data) {
             setCreds({ username: '', password: '', confirmPassword: '' });
-            fetchAdmins();
+            dispatch(fetchAllAdmins() as any);
             closeCreateForm();
           }
         } catch (error: any) {
@@ -77,7 +80,6 @@ function AdminForm({ fetchAdmins, closeCreateForm, usernameToUpdate }: Props) {
 
   return (
     <>
-      <button onClick={closeCreateForm}>Close X</button>
       <form onSubmit={handleCreateorUpdateAdmin} autoComplete="off">
         <div>
           <label>Username:</label>

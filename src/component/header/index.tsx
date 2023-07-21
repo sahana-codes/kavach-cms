@@ -1,17 +1,34 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { logoutAdmin } from '../../store/adminSlice';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  fetchAllAdmins,
+  logoutAdmin,
+  selectAdmins,
+} from '../../store/adminSlice';
+import { fetchAllContents, selectContents } from '../../store/contentSlice';
 
 function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const currentAdmin = useSelector((state: any) => state.admin.currentAdmin);
   const isSuperAdmin = useSelector((state: any) => state.admin.isSuperAdmin);
+  const allContents = useSelector(selectContents);
+  const allAdmins = useSelector(selectAdmins);
 
   const handleLogout = () => {
     dispatch(logoutAdmin() as any);
     navigate('/login');
+  };
+
+  const prepareContents = () => {
+    if (allContents.length === 0) dispatch(fetchAllContents() as any);
+    navigate('/content');
+  };
+
+  const prepareAdmins = () => {
+    if (allAdmins.length === 0) dispatch(fetchAllAdmins() as any);
+    navigate('/admin');
   };
 
   return (
@@ -21,15 +38,15 @@ function Header() {
           <img src="" alt="Kavach logo" />
         </Link>
         <nav>
-          <NavLink to="/content">
+          <button onClick={prepareContents}>
             <img src="" alt="Content" />
             <p>Content</p>
-          </NavLink>
+          </button>
           {isSuperAdmin && (
-            <NavLink to="/admin">
+            <button onClick={prepareAdmins}>
               <img src="" alt="Admin" />
               <p>Admin</p>
-            </NavLink>
+            </button>
           )}
           <button onClick={handleLogout}>Logout</button>
         </nav>

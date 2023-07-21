@@ -1,47 +1,50 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Column, useTable } from 'react-table';
-import { Content } from '.';
+import { Admin } from '../../store/adminSlice';
 
-interface ContentTableProps {
-  contents: Content[];
-  onSelectContent: (contentId: string) => Promise<void>;
-  openConfirmDelete: (id: string) => void;
+interface AdminTableProps {
+  admins: Admin[];
+  handleUpdateAdmin: (username: string) => void;
+  openConfirmDelete: (username: string) => void;
 }
 
-const ContentTable: React.FC<ContentTableProps> = ({
-  contents,
-  onSelectContent,
+const AdminTable: React.FC<AdminTableProps> = ({
+  admins,
+  handleUpdateAdmin,
   openConfirmDelete,
 }) => {
-  const data = React.useMemo(() => contents, [contents]);
-
-  const columns: Array<Column<Content>> = useMemo(
+  const columns: Array<Column<Admin>> = React.useMemo(
     () => [
-      { Header: 'ID', accessor: '_id' },
       {
-        Header: 'Title',
-        accessor: 'title',
-        Cell: ({ value, row }: any) => (
-          <button onClick={() => onSelectContent(row.original._id)}>
-            {value}
+        Header: 'ID',
+        accessor: '_id',
+      },
+      {
+        Header: 'Username',
+        accessor: 'username',
+      },
+      {
+        Header: 'Update',
+        Cell: ({ row }: any) => (
+          <button onClick={() => handleUpdateAdmin(row.original.username)}>
+            Update
           </button>
         ),
       },
-      { Header: 'Content Type', accessor: 'contentType' },
       {
         Header: 'Delete',
         Cell: ({ row }: any) => (
-          <button onClick={() => openConfirmDelete(row.original._id)}>
+          <button onClick={() => openConfirmDelete(row.original.username)}>
             Delete
           </button>
         ),
       },
     ],
-    []
+    [handleUpdateAdmin, openConfirmDelete]
   );
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data });
+    useTable({ columns, data: admins });
 
   return (
     <table {...getTableProps()}>
@@ -70,4 +73,4 @@ const ContentTable: React.FC<ContentTableProps> = ({
   );
 };
 
-export default ContentTable;
+export default AdminTable;

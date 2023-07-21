@@ -40,7 +40,6 @@ const AppRouter: React.FC = () => {
         path="/content"
         element={!currentAdmin ? <Navigate to="/login" replace /> : <Content />}
       />
-      {currentAdmin && <Route path="/content" element={<Content />} />}
       {isSuperAdmin && <Route path="/admin" element={<Admin />} />}
       <Route path="*" element={<NotFound />} />
     </Routes>

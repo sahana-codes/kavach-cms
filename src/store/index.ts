@@ -1,5 +1,6 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import adminReducer from './adminSlice';
+import contentReducer from './contentSlice';
 
 // Define the root state type
 export type RootState = ReturnType<typeof store.getState>;
@@ -19,6 +20,7 @@ export type AppDispatch = typeof store.dispatch;
 const store = configureStore({
   reducer: {
     admin: adminReducer,
+    content: contentReducer,
   },
 });
 

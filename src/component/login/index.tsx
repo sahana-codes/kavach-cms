@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getCurrentAdmin, login } from '../../services/admin';
 import { adminLogin } from '../../store/adminSlice';
 import { useDispatch } from 'react-redux';
+import { fetchAllContents } from '../../store/contentSlice';
 
 export interface Credentials {
   username: string;
@@ -47,6 +48,7 @@ const Login: React.FC = () => {
             'currentAdmin',
             JSON.stringify({ ...data.data })
           );
+          dispatch(fetchAllContents() as any);
           navigate('/content');
         }
       } catch (error: any) {

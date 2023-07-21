@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getS3UploadURL, uploadToS3 } from '../../services/s3';
 import { createContent } from '../../services/content';
 import { validateContentDetails } from '../../utils/validators';
+import { fetchAllContents } from '../../store/contentSlice';
+import { useDispatch } from 'react-redux';
 
 export type ContentType = 'AUDIO' | 'TEXT' | 'VIDEO';
 
@@ -11,9 +13,6 @@ interface AddContentFields {
   contentType: ContentType;
   readTime: string;
 }
-type AddContentProps = {
-  fetchContents: () => Promise<void>;
-};
 
 const initialDetails: AddContentFields = {
   title: '',
@@ -21,9 +20,7 @@ const initialDetails: AddContentFields = {
   contentType: 'AUDIO',
   readTime: '',
 };
-const AddContent: React.FC<AddContentProps> = ({
-  fetchContents,
-}: AddContentProps) => {
+const AddContent: React.FC = () => {
   const [{ uploadURL, Key }, setUploadResponse] = useState<{
     uploadURL: string;
     Key: string;
@@ -33,6 +30,7 @@ const AddContent: React.FC<AddContentProps> = ({
   const [{ title, description, contentType, readTime }, setContentDetails] =
     useState<AddContentFields>(initialDetails);
   const [error, setError] = useState<string>('');
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (file) {
@@ -88,7 +86,7 @@ const AddContent: React.FC<AddContentProps> = ({
             readTime
           );
           if (createContentResponse) {
-            fetchContents();
+            dispatch(fetchAllContents() as any);
             setFile(null);
             setContentDetails(initialDetails);
           }

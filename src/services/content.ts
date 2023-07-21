@@ -57,3 +57,11 @@ export const updateContent = (
     requestBody
   );
 };
+
+// export const deleteContent = (_id: string): Promise<ServiceResponse> => {
+//   return createService(`/admin/content/delete/${_id}`, 'DELETE');
+// };
+
+export const deleteContent = (_id: string) => {
+  return 'done';
+};
