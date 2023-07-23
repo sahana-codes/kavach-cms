@@ -4,6 +4,21 @@ import { getCurrentAdmin, login } from '../../services/admin';
 import { adminLogin } from '../../store/adminSlice';
 import { useDispatch } from 'react-redux';
 import { fetchAllContents } from '../../store/contentSlice';
+import {
+  Typography,
+  TextField,
+  Button,
+  InputAdornment,
+  IconButton,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  FormHelperText,
+  Box,
+  CircularProgress,
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { StyledButton } from './styles';
 
 export interface Credentials {
   username: string;
@@ -17,6 +32,7 @@ const Login: React.FC = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -40,6 +56,7 @@ const Login: React.FC = () => {
     }
     if (username && password) {
       try {
+        setLoading(true);
         const { data } = await login(username, password);
         if (data) {
           const { data } = await getCurrentAdmin();
@@ -53,42 +70,73 @@ const Login: React.FC = () => {
         }
       } catch (error: any) {
         setError(error.message);
+      } finally {
+        setLoading(false);
       }
-    } else
+    } else {
       setError(
         username ? 'Password cannot be empty.' : 'Username cannot be empty.'
       );
+    }
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    <Box maxWidth="400px" mx="auto" mt="50px">
+      <Typography variant="h4" align="center" gutterBottom>
+        Login
+      </Typography>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            name="username"
-            value={username}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
+        <TextField
+          fullWidth
+          variant="outlined"
+          label="Username"
+          name="username"
+          value={username}
+          onChange={handleChange}
+          error={!!error && !username}
+          helperText={error && !username ? error : ''}
+          margin="normal"
+        />
+        <FormControl
+          fullWidth
+          variant="outlined"
+          error={!!error && !password}
+          margin="normal"
+        >
+          <InputLabel htmlFor="outlined-adornment-password">
+            Password
+          </InputLabel>
+          <OutlinedInput
+            id="outlined-adornment-password"
             type={showPassword ? 'text' : 'password'}
             name="password"
             value={password}
             onChange={handleChange}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton onClick={togglePasswordVisibility} edge="end">
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+            label="Password"
           />
-          <button type="button" onClick={togglePasswordVisibility}>
-            {showPassword ? 'Hide' : 'Show'}
-          </button>
-        </div>
-        {error && <div dangerouslySetInnerHTML={{ __html: error }} />}
-        <button type="submit">Submit</button>
+          {error && <FormHelperText>{error}</FormHelperText>}
+        </FormControl>
+        <StyledButton
+          type="submit"
+          color="primary"
+          disabled={loading}
+          sx={{ mt: 3, fontSize: '0.8rem' }}
+        >
+          {loading ? (
+            <CircularProgress size={17} color="secondary" />
+          ) : (
+            'Continue'
+          )}
+        </StyledButton>
       </form>
-    </div>
+    </Box>
   );
 };
 

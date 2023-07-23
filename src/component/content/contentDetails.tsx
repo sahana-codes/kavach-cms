@@ -3,6 +3,7 @@ import { SelectedContent } from '.';
 import { getS3DownloadURL } from '../../services/s3';
 import { formatDate } from '../../utils/formatDate';
 import { updateContent } from '../../services/content';
+import { openSnackbar } from '../../store/snackbarSlice';
 
 type Props = {
   content: SelectedContent;
@@ -111,17 +112,17 @@ function ContentDetails({ content, updateContentDetails }: Props) {
         });
         setEditable(false);
         updateContentDetails(_id);
+        openSnackbar({ message: 'Updated successfully', severity: 'success' });
       }
     } catch (error) {
-      console.error('Error updating content:', error);
+      openSnackbar({ message: 'Error updating content', severity: 'error' });
     }
   };
 
   return (
     <>
-      <div style={{ display: 'flex' }}>
-        {/* Left side: Media preview */}
-        <div style={{ flex: 1 }}>{renderMediaPreview()}</div>
+      <div>
+        <div>{renderMediaPreview()}</div>
 
         <button
           onClick={() => {
@@ -130,8 +131,8 @@ function ContentDetails({ content, updateContentDetails }: Props) {
         >
           Edit
         </button>
-        {/* Right side: Input fields */}
-        <div style={{ flex: 1 }}>
+
+        <div>
           <div>
             <label>
               Title:

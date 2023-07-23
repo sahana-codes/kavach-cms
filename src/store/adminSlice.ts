@@ -37,22 +37,22 @@ export const adminSlice = createSlice({
     setAllAdmins: (state, action: PayloadAction<Admin[]>) => {
       state.allAdmins = action.payload;
     },
-    addAdmin: (state, action: PayloadAction<Admin>) => {
-      state.allAdmins.push(action.payload);
-    },
-    editAdmin: (state, action: PayloadAction<Admin>) => {
-      const index = state.allAdmins.findIndex(
-        (admin) => admin.username === action.payload.username
-      );
-      if (index !== -1) {
-        state.allAdmins[index] = action.payload;
-      }
-    },
-    deleteAdmin: (state, action: PayloadAction<string>) => {
-      state.allAdmins = state.allAdmins.filter(
-        (admin) => admin._id !== action.payload
-      );
-    },
+    // addAdmin: (state, action: PayloadAction<Admin>) => {
+    //   state.allAdmins.push(action.payload);
+    // },
+    // editAdmin: (state, action: PayloadAction<Admin>) => {
+    //   const index = state.allAdmins.findIndex(
+    //     (admin) => admin.username === action.payload.username
+    //   );
+    //   if (index !== -1) {
+    //     state.allAdmins[index] = action.payload;
+    //   }
+    // },
+    // deleteAdmin: (state, action: PayloadAction<string>) => {
+    //   state.allAdmins = state.allAdmins.filter(
+    //     (admin) => admin._id !== action.payload
+    //   );
+    // },
   },
 });
 
@@ -71,9 +71,9 @@ export const {
   adminLogin,
   adminLogout,
   setAllAdmins,
-  addAdmin,
-  editAdmin,
-  deleteAdmin,
+  // addAdmin,
+  // editAdmin,
+  // deleteAdmin,
 } = adminSlice.actions;
 
 export const fetchAllAdmins = (): AppThunk => async (dispatch, getState) => {

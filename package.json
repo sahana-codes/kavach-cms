@@ -10,6 +10,10 @@
     "lint": "eslint src/**/*.ts src/**/*.tsx"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.1",
+    "@mui/material": "^5.14.1",
     "@reduxjs/toolkit": "^1.9.5",
     "axios": "^1.4.0",
     "react": "^18.2.0",
@@ -17,7 +21,7 @@
     "react-redux": "^8.1.1",
     "react-router-dom": "^6.14.1",
     "react-table": "^7.8.0",
-    "sass": "^1.62.0"
+    "redux-persist": "^6.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",

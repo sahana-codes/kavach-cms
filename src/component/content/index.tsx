@@ -1,11 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import Header from '../header';
+import React, { useState } from 'react';
 import ContentTable from './contentTable';
-import {
-  deleteContent,
-  getAllContent,
-  getContentDetails,
-} from '../../services/content';
+import { deleteContent, getContentDetails } from '../../services/content';
 import ContentDetails from './contentDetails';
 import Modal from '../common/modal';
 import AddContent from './addContent';
@@ -68,7 +63,6 @@ const Content: React.FC = () => {
 
   return (
     <>
-      <Header />
       <button onClick={() => setShowAddContent(true)}>Add Content</button>
       <ContentTable
         contents={contents}

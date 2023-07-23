@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { deleteAdmin } from '../../services/admin';
-import Header from '../header';
 import { useDispatch, useSelector } from 'react-redux';
 import AdminForm from './adminForm';
 import Modal from '../common/modal';
@@ -40,7 +39,6 @@ const Admin: React.FC = () => {
 
   return (
     <>
-      <Header />
       <button onClick={() => setShowCreateForm(true)}>Create New Admin</button>
       {showCreateForm && (
         <Modal
