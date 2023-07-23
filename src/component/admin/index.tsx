@@ -6,6 +6,7 @@ import AreYouSure from '../common/areYouSure';
 import AdminTable from './adminTable';
 import { fetchAllAdmins, selectAdmins } from '../../store/adminSlice';
 import ModalContent from '../common/modalContent';
+import { openSnackbar } from '../../store/snackbarSlice';
 
 const Admin: React.FC = () => {
   const admins = useSelector(selectAdmins);
@@ -33,7 +34,10 @@ const Admin: React.FC = () => {
         setShowConfirmDelete(false);
       }
     } catch (error: any) {
-      console.error('Error occurred while deleting admin:', error);
+      openSnackbar({
+        message: 'Error occurred while deleting admin',
+        severity: 'error',
+      });
     }
   };
 
@@ -42,6 +46,7 @@ const Admin: React.FC = () => {
       <button onClick={() => setShowCreateForm(true)}>Create New Admin</button>
       {showCreateForm && (
         <ModalContent
+          title="Create Admin"
           open={showCreateForm}
           onClose={() => {
             setShowCreateForm(false);
@@ -64,12 +69,13 @@ const Admin: React.FC = () => {
       />
       {showConfirmDelete && adminToDelete && (
         <ModalContent
+          title="Are you sure?"
           onClose={() => setShowConfirmDelete(false)}
           open={showConfirmDelete}
         >
           <AreYouSure
             onCancel={() => setShowConfirmDelete(false)}
-            message={`Are you sure you want to delete ${adminToDelete}? This will permanently delete ${adminToDelete}.`}
+            message={`Are you sure you want to delete ${adminToDelete}? This action is irreversible.`}
             onConfirm={handleDeleteAdmin}
           />
         </ModalContent>

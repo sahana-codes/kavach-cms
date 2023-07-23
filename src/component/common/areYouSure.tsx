@@ -1,4 +1,6 @@
 import React from 'react';
+import { StyledButton } from '../login/styles';
+import { Box, Typography } from '@mui/material';
 
 type Props = {
   message: string;
@@ -12,42 +14,32 @@ const AreYouSure: React.FC<Props> = ({
   onCancel,
 }: Props) => {
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 9999,
-      }}
-    >
+    <Box>
+      <Typography
+        sx={{
+          fontSize: '1rem',
+          p: 2,
+        }}
+        component="p"
+      >
+        {message}
+      </Typography>
       <div
         style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          borderRadius: '8px',
+          display: 'flex',
+          justifyContent: 'center',
+          marginTop: '10px',
         }}
       >
-        <p>{message}</p>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            marginTop: '10px',
-          }}
+        <StyledButton
+          onClick={onConfirm}
+          style={{ marginRight: '10px', background: '#FF5A10' }}
         >
-          <button onClick={onConfirm} style={{ marginRight: '10px' }}>
-            Confirm
-          </button>
-          <button onClick={onCancel}>Cancel</button>
-        </div>
+          Confirm
+        </StyledButton>
+        <StyledButton onClick={onCancel}>Cancel</StyledButton>
       </div>
-    </div>
+    </Box>
   );
 };
 

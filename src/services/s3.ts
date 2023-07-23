@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { api } from './config';
 import { createService, ServiceResponse } from './createService';
+import { openSnackbar } from '../store/snackbarSlice';
 
 export interface S3ResponseData {
   data: { uploadURL?: string; downloadURL?: string; Key?: string };
@@ -53,7 +54,9 @@ export const uploadToS3 = async (
 
     return response;
   } catch (error) {
-    console.error('Error uploading file to S3:', error);
-    throw new Error('Failed to upload file to S3');
+    openSnackbar({
+      message: 'Error uploading file to S3',
+      severity: 'error',
+    });
   }
 };

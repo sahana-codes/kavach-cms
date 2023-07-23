@@ -5,6 +5,7 @@ import { createNewAdmin, updateAdmin } from '../../services/admin';
 
 import { fetchAllAdmins } from '../../store/adminSlice';
 import { useDispatch } from 'react-redux';
+import ErrorText from '../error/errorText';
 
 type Props = {
   closeCreateForm: () => void;
@@ -127,7 +128,9 @@ function AdminForm({ closeCreateForm, usernameToUpdate }: Props) {
             {showConfirmPassword ? 'Hide' : 'Show'}
           </button>
         </div>
-        {error && <div dangerouslySetInnerHTML={{ __html: error }} />}
+        <ErrorText>
+          <div dangerouslySetInnerHTML={{ __html: error }} />
+        </ErrorText>
         <button type="submit">Submit</button>
       </form>
     </>

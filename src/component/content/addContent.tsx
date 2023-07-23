@@ -17,6 +17,8 @@ import {
   Stack,
 } from '@mui/material';
 import { StyledButton } from '../login/styles';
+import ErrorText from '../error/errorText';
+import { openSnackbar } from '../../store/snackbarSlice';
 
 export type ContentType = 'AUDIO' | 'TEXT' | 'VIDEO';
 
@@ -64,7 +66,10 @@ const AddContent: React.FC<Props> = ({ closeModal }: Props) => {
       const { uploadURL, Key } = data.data;
       if (uploadURL && Key) setUploadResponse({ uploadURL, Key });
     } catch (error) {
-      console.error('Error occurred while fetching upload URL:', error);
+      openSnackbar({
+        message: 'Error occurred while fetching upload URL',
+        severity: 'error',
+      });
     }
   };
 
@@ -211,7 +216,7 @@ const AddContent: React.FC<Props> = ({ closeModal }: Props) => {
         sx={{ mb: 3 }}
       />
 
-      {error && <Typography color="error">{error}</Typography>}
+      <ErrorText message={error} />
 
       <StyledButton onClick={handleContentSubmit} style={{ marginTop: '20px' }}>
         Create

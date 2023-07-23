@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Content } from '../component/content';
 import { AppThunk, RootState } from '.';
 import { getAllContent } from '../services/content';
+import { openSnackbar } from './snackbarSlice';
 
 interface ContentState {
   contents: Content[];
@@ -52,7 +53,10 @@ export const fetchAllContents = (): AppThunk => async (dispatch) => {
 
     dispatch(setContents(allContents));
   } catch (error) {
-    console.error('Error fetching all admins:', error);
+    openSnackbar({
+      message: 'Error fetching all admins',
+      severity: 'error',
+    });
   }
 };
 

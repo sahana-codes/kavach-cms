@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Box } from '@mui/material';
 import { StyledButton } from '../login/styles';
 import ModalContent from '../common/modalContent';
+import { openSnackbar } from '../../store/snackbarSlice';
 
 export enum ContentType {
   AUDIO = 'AUDIO',
@@ -47,7 +48,10 @@ const ContentPage: React.FC = () => {
       setSelectedContent(data.data);
       setShowSelectedContent(true);
     } catch (error) {
-      console.error('Error occurred while fetching content details:', error);
+      openSnackbar({
+        message: 'Error occurred while fetching content details',
+        severity: 'error',
+      });
     }
   };
 
@@ -68,7 +72,10 @@ const ContentPage: React.FC = () => {
       }
     } catch (error: any) {
       setContentLoading(false);
-      console.error('Error occurred while deleting content:', error);
+      openSnackbar({
+        message: 'Error occurred while deleting content',
+        severity: 'error',
+      });
     }
   };
 
@@ -86,7 +93,7 @@ const ContentPage: React.FC = () => {
     >
       <StyledButton
         onClick={() => setShowAddContent(true)}
-        sx={{ mb: 2, alignSelf: 'flex-end' }}
+        sx={{ mb: 2, alignSelf: 'flex-start' }}
       >
         Add New Content
       </StyledButton>

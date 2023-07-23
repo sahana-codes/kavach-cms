@@ -66,7 +66,10 @@ function ContentDetails({ content, updateContentDetails }: Props) {
       }
       setPreviewLoading(false);
     } catch (error) {
-      console.error('Error fetching media URL:', error);
+      openSnackbar({
+        message: 'Error fetching media URL',
+        severity: 'error',
+      });
       setMediaUrl(null);
       setTextContent(null);
       setPreviewLoading(false);
@@ -204,11 +207,11 @@ function ContentDetails({ content, updateContentDetails }: Props) {
             minHeight: '400px',
           }}
         >
-          <Typography>
+          <Typography sx={{ fontSize: '0.9rem' }}>
             <span style={{ fontWeight: 600 }}>Created On:&nbsp;</span>
             {formatDate(createdAt)}
           </Typography>
-          <Typography>
+          <Typography sx={{ fontSize: '0.9rem' }}>
             <span style={{ fontWeight: 600 }}>Last updated:&nbsp;</span>
             {formatDate(updatedAt)}
           </Typography>

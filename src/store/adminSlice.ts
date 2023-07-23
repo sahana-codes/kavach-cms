@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { AppDispatch, AppThunk } from '.';
 import { getAllAdmins } from '../services/admin';
+import { openSnackbar } from './snackbarSlice';
 
 export interface Admin {
   _id?: string;
@@ -86,7 +87,10 @@ export const fetchAllAdmins = (): AppThunk => async (dispatch, getState) => {
     );
     dispatch(setAllAdmins(filteredAdmins));
   } catch (error) {
-    console.error('Error fetching all admins:', error);
+    openSnackbar({
+      message: 'Error fetching all admins',
+      severity: 'error',
+    });
   }
 };
 

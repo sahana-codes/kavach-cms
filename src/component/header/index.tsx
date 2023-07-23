@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   fetchAllAdmins,
   logoutAdmin,
@@ -10,11 +10,12 @@ import { fetchAllContents, selectContents } from '../../store/contentSlice';
 import { Toolbar, Box, Tooltip, Menu, IconButton, Avatar } from '@mui/material';
 import logoImage from '../../assets/logo.svg';
 import { Logout } from '@mui/icons-material';
-import { Image, NavLinkButton, StyledMenuItem } from './styles';
+import { Image, NavText, StyledMenuItem } from './styles';
 
 function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
   const currentAdmin = useSelector((state: any) => state.admin.currentAdmin);
   const isSuperAdmin = useSelector((state: any) => state.admin.isSuperAdmin);
   const allContents = useSelector(selectContents);
@@ -69,9 +70,19 @@ function Header() {
             alignItems: 'center',
           }}
         >
-          <NavLinkButton onClick={prepareContents}>Content</NavLinkButton>
+          <NavText
+            onClick={prepareContents}
+            isactive={location.pathname === '/content' ? 'true' : 'false'}
+          >
+            Content
+          </NavText>
           {isSuperAdmin && (
-            <NavLinkButton onClick={prepareAdmins}>Admin</NavLinkButton>
+            <NavText
+              onClick={prepareAdmins}
+              isactive={location.pathname === '/admin' ? 'true' : 'false'}
+            >
+              Admin
+            </NavText>
           )}
           <>
             <Tooltip title="Account">

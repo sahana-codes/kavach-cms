@@ -7,18 +7,17 @@ import { fetchAllContents } from '../../store/contentSlice';
 import {
   Typography,
   TextField,
-  Button,
   InputAdornment,
   IconButton,
   FormControl,
   InputLabel,
   OutlinedInput,
-  FormHelperText,
   Box,
   CircularProgress,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { StyledButton } from './styles';
+import ErrorText from '../error/errorText';
 
 export interface Credentials {
   username: string;
@@ -121,7 +120,8 @@ const Login: React.FC = () => {
             }
             label="Password"
           />
-          {error && <FormHelperText>{error}</FormHelperText>}
+
+          <ErrorText>{error}</ErrorText>
         </FormControl>
         <StyledButton
           type="submit"
