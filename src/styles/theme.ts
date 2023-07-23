@@ -11,7 +11,7 @@ const theme = createTheme({
     },
     background: {
       default: '#E9FC88',
-      paper: '#FFFADE',
+      // paper: '#FFFADE',
     },
     // You can add more colors like 'error', 'warning', 'info', and 'success' here
   },

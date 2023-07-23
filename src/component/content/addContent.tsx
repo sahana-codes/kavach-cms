@@ -4,6 +4,19 @@ import { createContent } from '../../services/content';
 import { validateContentDetails } from '../../utils/validators';
 import { fetchAllContents } from '../../store/contentSlice';
 import { useDispatch } from 'react-redux';
+import {
+  Box,
+  Button,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Typography,
+  SelectChangeEvent,
+  Stack,
+} from '@mui/material';
+import { StyledButton } from '../login/styles';
 
 export type ContentType = 'AUDIO' | 'TEXT' | 'VIDEO';
 
@@ -20,16 +33,23 @@ const initialDetails: AddContentFields = {
   contentType: 'AUDIO',
   readTime: '',
 };
-const AddContent: React.FC = () => {
+
+type Props = {
+  closeModal: () => void;
+};
+
+const AddContent: React.FC<Props> = ({ closeModal }: Props) => {
   const [{ uploadURL, Key }, setUploadResponse] = useState<{
     uploadURL: string;
     Key: string;
   }>({ uploadURL: '', Key: '' });
 
   const [file, setFile] = useState<File | null>(null);
+
   const [{ title, description, contentType, readTime }, setContentDetails] =
     useState<AddContentFields>(initialDetails);
   const [error, setError] = useState<string>('');
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -49,19 +69,30 @@ const AddContent: React.FC = () => {
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setError('');
+
     if (event.target.files && event.target.files.length > 0) {
       setFile(event.target.files[0]);
     }
   };
 
-  const updateForm = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const updateForm = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError('');
     const { name, value } = e.target;
     setContentDetails((prevDetails) => ({
       ...prevDetails,
       [name]: value,
+    }));
+  };
+
+  const handleSelectChange = (
+    e: SelectChangeEvent<'AUDIO' | 'TEXT' | 'VIDEO'>
+  ) => {
+    setError('');
+    const { name, value } = e.target;
+    setContentDetails((prevDetails) => ({
+      ...prevDetails,
+      [name as string]: value as string,
     }));
   };
 
@@ -76,7 +107,8 @@ const AddContent: React.FC = () => {
       validateContentDetails(title, description, contentType, readTime, Key)
     ) {
       try {
-        const response = await uploadToS3(uploadURL, file);
+        const response = await uploadToS3(uploadURL, file, (progress) => {});
+
         if (response.statusText === 'OK') {
           const createContentResponse = await createContent(
             title,
@@ -85,6 +117,7 @@ const AddContent: React.FC = () => {
             contentType,
             readTime
           );
+
           if (createContentResponse) {
             dispatch(fetchAllContents() as any);
             setFile(null);
@@ -93,6 +126,8 @@ const AddContent: React.FC = () => {
         }
       } catch (error) {
         setError(`Error creating content: ${error}`);
+      } finally {
+        closeModal();
       }
     } else {
       setError('Please fill all the content details');
@@ -100,38 +135,88 @@ const AddContent: React.FC = () => {
   };
 
   return (
-    <div>
-      <input type="file" onChange={handleFileChange} />
-
-      <input
-        type="text"
+    <Box
+      display="flex"
+      flexDirection="column"
+      maxWidth="400px"
+      minWidth="300px"
+      mx="auto"
+      p={2}
+    >
+      <Stack direction="row" alignItems="center" spacing={2}>
+        <label htmlFor="upload-file">
+          <Button
+            component="label"
+            sx={(theme) => ({
+              background: theme.palette.primary.main,
+              color: theme.palette.secondary.main,
+              fontWeight: 600,
+              padding: '20px',
+              borderRadius: '8px',
+              height: '45px',
+              textTransform: 'none',
+              '&:hover': {
+                background: theme.palette.primary.main,
+              },
+            })}
+          >
+            Upload File
+            <input
+              hidden
+              type="file"
+              onChange={handleFileChange}
+              id="upload-file"
+            />
+          </Button>
+        </label>
+        <Box>{file && <Typography>{file.name}</Typography>}</Box>
+      </Stack>
+      <TextField
         value={title}
         name="title"
         onChange={updateForm}
-        placeholder="Title"
+        label="Title"
+        variant="outlined"
+        margin="normal"
       />
-      <input
-        type="text"
+      <TextField
         value={description}
         name="description"
         onChange={updateForm}
-        placeholder="Description"
+        label="Description"
+        variant="outlined"
+        margin="normal"
       />
-      <select value={contentType} name="contentType" onChange={updateForm}>
-        <option value="AUDIO">Audio</option>
-        <option value="TEXT">Text</option>
-        <option value="VIDEO">Video</option>
-      </select>
-      <input
-        type="text"
+      <FormControl variant="outlined" margin="normal">
+        <InputLabel htmlFor="contentType">Content Type</InputLabel>
+        <Select
+          value={contentType}
+          name="contentType"
+          onChange={handleSelectChange}
+          label="Content Type"
+          id="contentType"
+        >
+          <MenuItem value="AUDIO">Audio</MenuItem>
+          <MenuItem value="TEXT">Text</MenuItem>
+          <MenuItem value="VIDEO">Video</MenuItem>
+        </Select>
+      </FormControl>
+      <TextField
         value={readTime}
         name="readTime"
         onChange={updateForm}
-        placeholder="Read Time"
+        label="Read Time"
+        variant="outlined"
+        margin="normal"
+        sx={{ mb: 3 }}
       />
-      {error && <p>{error}</p>}
-      <button onClick={handleContentSubmit}>Create Content</button>
-    </div>
+
+      {error && <Typography color="error">{error}</Typography>}
+
+      <StyledButton onClick={handleContentSubmit} style={{ marginTop: '20px' }}>
+        Create
+      </StyledButton>
+    </Box>
   );
 };
 

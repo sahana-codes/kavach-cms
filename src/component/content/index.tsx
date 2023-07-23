@@ -2,16 +2,23 @@ import React, { useState } from 'react';
 import ContentTable from './contentTable';
 import { deleteContent, getContentDetails } from '../../services/content';
 import ContentDetails from './contentDetails';
-import Modal from '../common/modal';
 import AddContent from './addContent';
 import AreYouSure from '../common/areYouSure';
 import { fetchAllContents, selectContents } from '../../store/contentSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { Box } from '@mui/material';
+import { StyledButton } from '../login/styles';
+import ModalContent from '../common/modalContent';
 
+export enum ContentType {
+  AUDIO = 'AUDIO',
+  TEXT = 'TEXT',
+  VIDEO = 'VIDEO',
+}
 export interface Content {
   _id: string;
   title: string;
-  contentType: string;
+  contentType: ContentType;
   readTime?: string;
   createdAt: string;
 }
@@ -22,7 +29,7 @@ export interface SelectedContent extends Content {
   updatedAt: string;
 }
 
-const Content: React.FC = () => {
+const ContentPage: React.FC = () => {
   const contents = useSelector(selectContents);
   const [selectedContent, setSelectedContent] =
     useState<SelectedContent | null>(null);
@@ -30,6 +37,7 @@ const Content: React.FC = () => {
   const [showAddContent, setShowAddContent] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [contentToDelete, setContentToDelete] = useState('');
+  const [contentLoading, setContentLoading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -48,51 +56,84 @@ const Content: React.FC = () => {
     setShowConfirmDelete(true);
   };
 
-  const handleDeleteAdmin = async () => {
+  const handleDeleteContent = async () => {
     try {
       // const { data } = await deleteContent(contentToDelete);
       const data = deleteContent(contentToDelete);
       if (data) {
+        setContentLoading(true);
         dispatch(fetchAllContents() as any);
         setShowConfirmDelete(false);
+        setContentLoading(false);
       }
     } catch (error: any) {
-      console.error('Error occurred while deleting admin:', error);
+      setContentLoading(false);
+      console.error('Error occurred while deleting content:', error);
     }
   };
 
   return (
-    <>
-      <button onClick={() => setShowAddContent(true)}>Add Content</button>
-      <ContentTable
-        contents={contents}
-        onSelectContent={onSelectContent}
-        openConfirmDelete={openConfirmDelete}
-      />
+    <Box
+      maxWidth="800px"
+      mx="auto"
+      my="50px"
+      p={2}
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        flexDirection: 'column',
+      }}
+    >
+      <StyledButton
+        onClick={() => setShowAddContent(true)}
+        sx={{ mb: 2, alignSelf: 'flex-end' }}
+      >
+        Add New Content
+      </StyledButton>
+      {showAddContent && (
+        <ModalContent
+          title="Add New Content"
+          onClose={() => setShowAddContent(false)}
+          open={showAddContent}
+        >
+          <AddContent closeModal={() => setShowAddContent(false)} />
+        </ModalContent>
+      )}
+
       {showSelectedContent && selectedContent && (
-        <Modal onClose={() => setShowSelectedContent(false)}>
+        <ModalContent
+          title="Update Content"
+          onClose={() => setShowSelectedContent(false)}
+          open={showSelectedContent}
+        >
           <ContentDetails
             content={selectedContent}
             updateContentDetails={onSelectContent}
           />
-        </Modal>
+        </ModalContent>
       )}
-      {showAddContent && (
-        <Modal onClose={() => setShowAddContent(false)}>
-          <AddContent />
-        </Modal>
-      )}
+
       {showConfirmDelete && contentToDelete && (
-        <Modal onClose={() => setShowConfirmDelete(false)}>
+        <ModalContent
+          title="Confirm Delete"
+          onClose={() => setShowConfirmDelete(false)}
+          open={showConfirmDelete}
+        >
           <AreYouSure
             onCancel={() => setShowConfirmDelete(false)}
             message={`Are you sure you want to delete this content? This action is irreversible.`}
-            onConfirm={handleDeleteAdmin}
+            onConfirm={handleDeleteContent}
           />
-        </Modal>
+        </ModalContent>
       )}
-    </>
+      <ContentTable
+        contents={contents}
+        onSelectContent={onSelectContent}
+        openConfirmDelete={openConfirmDelete}
+        contentLoading={contentLoading}
+      />
+    </Box>
   );
 };
 
-export default Content;
+export default ContentPage;

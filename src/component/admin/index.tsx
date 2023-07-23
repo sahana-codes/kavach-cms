@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { deleteAdmin } from '../../services/admin';
 import { useDispatch, useSelector } from 'react-redux';
 import AdminForm from './adminForm';
-import Modal from '../common/modal';
 import AreYouSure from '../common/areYouSure';
 import AdminTable from './adminTable';
 import { fetchAllAdmins, selectAdmins } from '../../store/adminSlice';
+import ModalContent from '../common/modalContent';
 
 const Admin: React.FC = () => {
   const admins = useSelector(selectAdmins);
@@ -41,7 +41,8 @@ const Admin: React.FC = () => {
     <>
       <button onClick={() => setShowCreateForm(true)}>Create New Admin</button>
       {showCreateForm && (
-        <Modal
+        <ModalContent
+          open={showCreateForm}
           onClose={() => {
             setShowCreateForm(false);
             setUsernameToUpdate('');
@@ -54,7 +55,7 @@ const Admin: React.FC = () => {
             }}
             usernameToUpdate={usernameToUpdate}
           />
-        </Modal>
+        </ModalContent>
       )}
       <AdminTable
         admins={admins}
@@ -62,13 +63,16 @@ const Admin: React.FC = () => {
         openConfirmDelete={openConfirmDelete}
       />
       {showConfirmDelete && adminToDelete && (
-        <Modal onClose={() => setShowConfirmDelete(false)}>
+        <ModalContent
+          onClose={() => setShowConfirmDelete(false)}
+          open={showConfirmDelete}
+        >
           <AreYouSure
             onCancel={() => setShowConfirmDelete(false)}
             message={`Are you sure you want to delete ${adminToDelete}? This will permanently delete ${adminToDelete}.`}
             onConfirm={handleDeleteAdmin}
           />
-        </Modal>
+        </ModalContent>
       )}
     </>
   );

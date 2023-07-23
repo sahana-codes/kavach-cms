@@ -127,7 +127,7 @@ const Login: React.FC = () => {
           type="submit"
           color="primary"
           disabled={loading}
-          sx={{ mt: 3, fontSize: '0.8rem' }}
+          sx={{ mt: 3, fontSize: '0.8rem', width: '100%' }}
         >
           {loading ? (
             <CircularProgress size={17} color="secondary" />
