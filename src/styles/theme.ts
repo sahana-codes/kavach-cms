@@ -22,6 +22,20 @@ const theme = createTheme({
     fontFamily: 'Inter, sans-serif',
     fontWeightBold: 600,
   },
+  components: {
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          borderColor: '#0B0A07',
+          borderWidth: '2px',
+        },
+        input: {
+          color: '#0B0A07',
+        },
+      },
+    },
+    // Add more component overrides here if needed
+  },
 });
 
 export default theme;

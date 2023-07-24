@@ -33,7 +33,7 @@ interface ContentTableProps {
   contentLoading: boolean;
 }
 
-type SortDirection = 'asc' | 'desc' | undefined;
+export type SortDirection = 'asc' | 'desc' | undefined;
 
 const ContentTable: React.FC<ContentTableProps> = ({
   contents,
@@ -63,12 +63,10 @@ const ContentTable: React.FC<ContentTableProps> = ({
 
   const sortData = (column: keyof Content) => {
     if (sortingColumn === column) {
-      // Toggle sort direction if sorting the same column
       setSortDirection((prevDirection) =>
         prevDirection === 'asc' ? 'desc' : 'asc'
       );
     } else {
-      // Set sorting column and default sort direction to 'asc'
       setSortingColumn(column);
       setSortDirection('asc');
     }

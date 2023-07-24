@@ -13,10 +13,12 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { StyledButton } from '../login/styles';
+import { useDispatch } from 'react-redux';
 
 type Props = {
   content: SelectedContent;
-  updateContentDetails: (contentId: string) => Promise<void>;
+
+  onClose: () => void;
 };
 
 type NewContentDetails = {
@@ -25,7 +27,7 @@ type NewContentDetails = {
   newReadTime: string;
 };
 
-function ContentDetails({ content, updateContentDetails }: Props) {
+function ContentDetails({ content, onClose }: Props) {
   const {
     _id,
     title,
@@ -40,6 +42,7 @@ function ContentDetails({ content, updateContentDetails }: Props) {
   const [mediaUrl, setMediaUrl] = useState<string | null>(null);
   const [textContent, setTextContent] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState<boolean>(true);
+  const dispatch = useDispatch();
 
   const [{ newTitle, newDescription, newReadTime }, setNewDetails] =
     useState<NewContentDetails>({
@@ -60,16 +63,31 @@ function ContentDetails({ content, updateContentDetails }: Props) {
       downloadURL && setMediaUrl(downloadURL);
 
       if (contentType === 'TEXT' && downloadURL) {
-        const textResponse = await fetch(downloadURL);
-        const textContent = await textResponse.text();
-        setTextContent(textContent);
+        try {
+          const textResponse = await fetch(downloadURL);
+          if (!textResponse.ok) {
+            throw new Error('Failed to fetch text content.');
+          }
+          const textContent = await textResponse.text();
+          setTextContent(textContent);
+        } catch (error) {
+          dispatch(
+            openSnackbar({
+              message: 'Error fetching text content',
+              severity: 'error',
+            })
+          );
+          setTextContent('Failed to load text content.');
+        }
       }
       setPreviewLoading(false);
     } catch (error) {
-      openSnackbar({
-        message: 'Error fetching media URL',
-        severity: 'error',
-      });
+      dispatch(
+        openSnackbar({
+          message: 'Error fetching media URL',
+          severity: 'error',
+        })
+      );
       setMediaUrl(null);
       setTextContent(null);
       setPreviewLoading(false);
@@ -97,12 +115,15 @@ function ContentDetails({ content, updateContentDetails }: Props) {
           newReadTime: '',
           newTitle: '',
         });
-
-        updateContentDetails(_id);
-        openSnackbar({ message: 'Updated successfully', severity: 'success' });
+        dispatch(
+          openSnackbar({ message: 'Updated successfully', severity: 'success' })
+        );
+        onClose();
       }
     } catch (error) {
-      openSnackbar({ message: 'Error updating content', severity: 'error' });
+      dispatch(
+        openSnackbar({ message: 'Error updating content', severity: 'error' })
+      );
     }
   };
 

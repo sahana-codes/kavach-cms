@@ -2,10 +2,22 @@ import React, { useState } from 'react';
 import { Credentials } from '../login';
 import { validatePassword, validateUsername } from '../../utils/validators';
 import { createNewAdmin, updateAdmin } from '../../services/admin';
-
 import { fetchAllAdmins } from '../../store/adminSlice';
 import { useDispatch } from 'react-redux';
 import ErrorText from '../error/errorText';
+import {
+  Box,
+  Button,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { StyledButton } from '../login/styles';
 
 type Props = {
   closeCreateForm: () => void;
@@ -40,8 +52,9 @@ function AdminForm({ closeCreateForm, usernameToUpdate }: Props) {
       setError(validateUsername(value));
     } else if (name === 'password') {
       setError(validatePassword(value));
-    } else if (name === 'confirmPassword') {
-      setError(validatePassword(value));
+    }
+    if (name === 'confirmPassword' && password !== value) {
+      setError('Passwords do not match.');
     }
   };
 
@@ -72,7 +85,7 @@ function AdminForm({ closeCreateForm, usernameToUpdate }: Props) {
         } catch (error: any) {
           setError(error.message);
         }
-      } else setError('Passwords do not match');
+      } else setError('Passwords do not match.');
     } else
       setError(
         username ? 'Password cannot be empty.' : 'Username cannot be empty.'
@@ -80,60 +93,88 @@ function AdminForm({ closeCreateForm, usernameToUpdate }: Props) {
   };
 
   return (
-    <>
-      <form onSubmit={handleCreateorUpdateAdmin} autoComplete="off">
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            name="username"
-            id="username"
-            value={username}
-            onChange={handleChange}
-            autoComplete="off"
-            readOnly={usernameToUpdate ? true : false}
-          />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
+    <Box
+      component="form"
+      onSubmit={handleCreateorUpdateAdmin}
+      autoComplete="off"
+      sx={{
+        width: '400px',
+        height: '350px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        flexDirection: 'column',
+        p: 2,
+      }}
+    >
+      <Box mb={2}>
+        <TextField
+          fullWidth
+          variant="outlined"
+          label="Username"
+          name="username"
+          id="username"
+          value={username}
+          onChange={handleChange}
+          autoComplete="off"
+          disabled={usernameToUpdate ? true : false}
+        />
+      </Box>
+      <Box mb={2}>
+        <FormControl fullWidth variant="outlined">
+          <InputLabel htmlFor="password">Password</InputLabel>
+          <OutlinedInput
+            id="password"
             type={showPassword ? 'text' : 'password'}
             name="password"
-            id="password"
             value={password}
             onChange={handleChange}
             autoComplete="off"
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => togglePasswordVisibility('password')}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+            label="Password"
           />
-          <button
-            type="button"
-            onClick={() => togglePasswordVisibility('password')}
-          >
-            {showPassword ? 'Hide' : 'Show'}
-          </button>
-        </div>
-        <div>
-          <label>Confirm Password:</label>
-          <input
+        </FormControl>
+      </Box>
+      <Box mb={2}>
+        <FormControl fullWidth variant="outlined">
+          <InputLabel htmlFor="confirmPassword">Confirm Password</InputLabel>
+          <OutlinedInput
+            id="confirmPassword"
             type={showConfirmPassword ? 'text' : 'password'}
             name="confirmPassword"
-            id="confirmPassword"
             value={confirmPassword}
             onChange={handleChange}
             autoComplete="off"
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => togglePasswordVisibility('confirmPassword')}
+                  edge="end"
+                >
+                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+            label="Confirm Password"
           />
-          <button
-            type="button"
-            onClick={() => togglePasswordVisibility('confirmPassword')}
-          >
-            {showConfirmPassword ? 'Hide' : 'Show'}
-          </button>
-        </div>
+        </FormControl>
         <ErrorText>
-          <div dangerouslySetInnerHTML={{ __html: error }} />
+          <Typography
+            dangerouslySetInnerHTML={{ __html: error }}
+            sx={{ fontSize: '0.8rem', fontWeight: 600 }}
+          />
         </ErrorText>
-        <button type="submit">Submit</button>
-      </form>
-    </>
+      </Box>
+      <StyledButton type="submit">Submit</StyledButton>
+    </Box>
   );
 }
 

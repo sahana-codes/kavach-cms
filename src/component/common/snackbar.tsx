@@ -16,7 +16,12 @@ const SnackbarComponent: React.FC = () => {
   };
 
   return (
-    <Snackbar open={open} autoHideDuration={2000} onClose={handleClose}>
+    <Snackbar
+      open={open}
+      autoHideDuration={2000}
+      onClose={handleClose}
+      sx={{ fontSize: '1rem', fontWeight: 400 }}
+    >
       <Alert onClose={handleClose} severity={severity}>
         {message}
       </Alert>

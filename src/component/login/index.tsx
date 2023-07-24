@@ -80,9 +80,9 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Box maxWidth="400px" mx="auto" mt="50px">
+    <Box maxWidth="400px" mx="auto" mt="100px">
       <Typography variant="h4" align="center" gutterBottom>
-        Login
+        Login to Kavach CMS
       </Typography>
       <form onSubmit={handleSubmit}>
         <TextField

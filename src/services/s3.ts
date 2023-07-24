@@ -54,9 +54,6 @@ export const uploadToS3 = async (
 
     return response;
   } catch (error) {
-    openSnackbar({
-      message: 'Error uploading file to S3',
-      severity: 'error',
-    });
+    console.error('Error uploading file to S3', error);
   }
 };

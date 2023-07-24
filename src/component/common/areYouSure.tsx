@@ -22,7 +22,9 @@ const AreYouSure: React.FC<Props> = ({
         }}
         component="p"
       >
-        {message}
+        Are you sure you want to delete&nbsp;
+        <span style={{ fontWeight: 600, color: '#FF5A10' }}>{message}</span>?
+        This action is irreversible!
       </Typography>
       <div
         style={{

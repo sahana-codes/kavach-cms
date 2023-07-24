@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { deleteAdmin } from '../../services/admin';
 import { useDispatch, useSelector } from 'react-redux';
-// import AdminForm from './adminForm';
-// import AreYouSure from '../common/areYouSure';
-// import AdminTable from './adminTable';
+import { Box, CircularProgress } from '@mui/material';
 import { fetchAllAdmins, selectAdmins } from '../../store/adminSlice';
 import ModalContent from '../common/modalContent';
 import { openSnackbar } from '../../store/snackbarSlice';
-import { CircularProgress } from '@mui/material';
+import { StyledButton } from '../login/styles';
 
 const AdminForm = React.lazy(() => import('./adminForm'));
 const AdminTable = React.lazy(() => import('./adminTable'));
@@ -39,16 +37,20 @@ const Admin: React.FC = () => {
         setShowConfirmDelete(false);
       }
     } catch (error: any) {
-      openSnackbar({
-        message: 'Error occurred while deleting admin',
-        severity: 'error',
-      });
+      dispatch(
+        openSnackbar({
+          message: 'Error occurred while deleting admin',
+          severity: 'error',
+        })
+      );
     }
   };
 
   return (
-    <>
-      <button onClick={() => setShowCreateForm(true)}>Create New Admin</button>
+    <Box maxWidth="800px" mx="auto" my="50px" p={2}>
+      <StyledButton onClick={() => setShowCreateForm(true)} sx={{ mb: 2 }}>
+        Create New Admin
+      </StyledButton>
       {showCreateForm && (
         <ModalContent
           title="Create Admin"
@@ -78,20 +80,20 @@ const Admin: React.FC = () => {
       </React.Suspense>
       {showConfirmDelete && adminToDelete && (
         <ModalContent
-          title="Are you sure?"
-          onClose={() => setShowConfirmDelete(false)}
+          title="Confirm Delete"
           open={showConfirmDelete}
+          onClose={() => setShowConfirmDelete(false)}
         >
           <React.Suspense fallback={<CircularProgress />}>
             <AreYouSure
               onCancel={() => setShowConfirmDelete(false)}
-              message={`Are you sure you want to delete ${adminToDelete}? This action is irreversible.`}
+              message={adminToDelete}
               onConfirm={handleDeleteAdmin}
             />
           </React.Suspense>
         </ModalContent>
       )}
-    </>
+    </Box>
   );
 };
 

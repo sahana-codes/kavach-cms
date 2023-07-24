@@ -59,23 +59,14 @@ export const adminSlice = createSlice({
 
 export const logoutAdmin = () => {
   return (dispatch: AppDispatch) => {
-    // Clear the localStorage
     localStorage.removeItem('authToken');
     localStorage.removeItem('currentAdmin');
 
-    // Dispatch the adminLogout action
     dispatch(adminLogout());
   };
 };
 
-export const {
-  adminLogin,
-  adminLogout,
-  setAllAdmins,
-  // addAdmin,
-  // editAdmin,
-  // deleteAdmin,
-} = adminSlice.actions;
+export const { adminLogin, adminLogout, setAllAdmins } = adminSlice.actions;
 
 export const fetchAllAdmins = (): AppThunk => async (dispatch, getState) => {
   try {
@@ -87,10 +78,12 @@ export const fetchAllAdmins = (): AppThunk => async (dispatch, getState) => {
     );
     dispatch(setAllAdmins(filteredAdmins));
   } catch (error) {
-    openSnackbar({
-      message: 'Error fetching all admins',
-      severity: 'error',
-    });
+    dispatch(
+      openSnackbar({
+        message: 'Error fetching all admins',
+        severity: 'error',
+      })
+    );
   }
 };
 

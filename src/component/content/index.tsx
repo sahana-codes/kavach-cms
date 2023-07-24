@@ -49,10 +49,12 @@ const ContentPage: React.FC = () => {
       setSelectedContent(data.data);
       setShowSelectedContent(true);
     } catch (error) {
-      openSnackbar({
-        message: 'Error occurred while fetching content details',
-        severity: 'error',
-      });
+      dispatch(
+        openSnackbar({
+          message: 'Error occurred while fetching content details',
+          severity: 'error',
+        })
+      );
     }
   };
 
@@ -73,10 +75,12 @@ const ContentPage: React.FC = () => {
       }
     } catch (error: any) {
       setContentLoading(false);
-      openSnackbar({
-        message: 'Error occurred while deleting content',
-        severity: 'error',
-      });
+      dispatch(
+        openSnackbar({
+          message: 'Error occurred while deleting content',
+          severity: 'error',
+        })
+      );
     }
   };
 
@@ -113,13 +117,19 @@ const ContentPage: React.FC = () => {
       {showSelectedContent && selectedContent && (
         <ModalContent
           title="Update Content"
-          onClose={() => setShowSelectedContent(false)}
+          onClose={() => {
+            setSelectedContent(null);
+            setShowSelectedContent(false);
+          }}
           open={showSelectedContent}
         >
           <React.Suspense fallback={<CircularProgress />}>
             <ContentDetails
               content={selectedContent}
-              updateContentDetails={onSelectContent}
+              onClose={() => {
+                setSelectedContent(null);
+                setShowSelectedContent(false);
+              }}
             />
           </React.Suspense>
         </ModalContent>
@@ -134,7 +144,7 @@ const ContentPage: React.FC = () => {
           <React.Suspense fallback={<CircularProgress />}>
             <AreYouSure
               onCancel={() => setShowConfirmDelete(false)}
-              message={`Are you sure you want to delete this content? This action is irreversible.`}
+              message="this content"
               onConfirm={handleDeleteContent}
             />
           </React.Suspense>

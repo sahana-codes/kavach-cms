@@ -53,10 +53,12 @@ export const fetchAllContents = (): AppThunk => async (dispatch) => {
 
     dispatch(setContents(allContents));
   } catch (error) {
-    openSnackbar({
-      message: 'Error fetching all admins',
-      severity: 'error',
-    });
+    dispatch(
+      openSnackbar({
+        message: 'Error fetching all admins',
+        severity: 'error',
+      })
+    );
   }
 };
 

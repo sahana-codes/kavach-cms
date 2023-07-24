@@ -66,10 +66,12 @@ const AddContent: React.FC<Props> = ({ closeModal }: Props) => {
       const { uploadURL, Key } = data.data;
       if (uploadURL && Key) setUploadResponse({ uploadURL, Key });
     } catch (error) {
-      openSnackbar({
-        message: 'Error occurred while fetching upload URL',
-        severity: 'error',
-      });
+      dispatch(
+        openSnackbar({
+          message: 'Error occurred while fetching upload URL',
+          severity: 'error',
+        })
+      );
     }
   };
 
