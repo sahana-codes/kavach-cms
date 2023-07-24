@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import ContentTable from './contentTable';
 import { deleteContent, getContentDetails } from '../../services/content';
-import ContentDetails from './contentDetails';
-import AddContent from './addContent';
-import AreYouSure from '../common/areYouSure';
 import { fetchAllContents, selectContents } from '../../store/contentSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import { StyledButton } from '../login/styles';
 import ModalContent from '../common/modalContent';
 import { openSnackbar } from '../../store/snackbarSlice';
+
+const ContentTable = React.lazy(() => import('./contentTable'));
+const ContentDetails = React.lazy(() => import('./contentDetails'));
+const AddContent = React.lazy(() => import('./addContent'));
+const AreYouSure = React.lazy(() => import('../common/areYouSure'));
 
 export enum ContentType {
   AUDIO = 'AUDIO',
@@ -103,7 +104,9 @@ const ContentPage: React.FC = () => {
           onClose={() => setShowAddContent(false)}
           open={showAddContent}
         >
-          <AddContent closeModal={() => setShowAddContent(false)} />
+          <React.Suspense fallback={<CircularProgress />}>
+            <AddContent closeModal={() => setShowAddContent(false)} />
+          </React.Suspense>
         </ModalContent>
       )}
 
@@ -113,10 +116,12 @@ const ContentPage: React.FC = () => {
           onClose={() => setShowSelectedContent(false)}
           open={showSelectedContent}
         >
-          <ContentDetails
-            content={selectedContent}
-            updateContentDetails={onSelectContent}
-          />
+          <React.Suspense fallback={<CircularProgress />}>
+            <ContentDetails
+              content={selectedContent}
+              updateContentDetails={onSelectContent}
+            />
+          </React.Suspense>
         </ModalContent>
       )}
 
@@ -126,19 +131,23 @@ const ContentPage: React.FC = () => {
           onClose={() => setShowConfirmDelete(false)}
           open={showConfirmDelete}
         >
-          <AreYouSure
-            onCancel={() => setShowConfirmDelete(false)}
-            message={`Are you sure you want to delete this content? This action is irreversible.`}
-            onConfirm={handleDeleteContent}
-          />
+          <React.Suspense fallback={<CircularProgress />}>
+            <AreYouSure
+              onCancel={() => setShowConfirmDelete(false)}
+              message={`Are you sure you want to delete this content? This action is irreversible.`}
+              onConfirm={handleDeleteContent}
+            />
+          </React.Suspense>
         </ModalContent>
       )}
-      <ContentTable
-        contents={contents}
-        onSelectContent={onSelectContent}
-        openConfirmDelete={openConfirmDelete}
-        contentLoading={contentLoading}
-      />
+      <React.Suspense fallback={<CircularProgress />}>
+        <ContentTable
+          contents={contents}
+          onSelectContent={onSelectContent}
+          openConfirmDelete={openConfirmDelete}
+          contentLoading={contentLoading}
+        />
+      </React.Suspense>
     </Box>
   );
 };

@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { deleteAdmin } from '../../services/admin';
 import { useDispatch, useSelector } from 'react-redux';
-import AdminForm from './adminForm';
-import AreYouSure from '../common/areYouSure';
-import AdminTable from './adminTable';
+// import AdminForm from './adminForm';
+// import AreYouSure from '../common/areYouSure';
+// import AdminTable from './adminTable';
 import { fetchAllAdmins, selectAdmins } from '../../store/adminSlice';
 import ModalContent from '../common/modalContent';
 import { openSnackbar } from '../../store/snackbarSlice';
+import { CircularProgress } from '@mui/material';
+
+const AdminForm = React.lazy(() => import('./adminForm'));
+const AdminTable = React.lazy(() => import('./adminTable'));
+const AreYouSure = React.lazy(() => import('../common/areYouSure'));
 
 const Admin: React.FC = () => {
   const admins = useSelector(selectAdmins);
@@ -53,31 +58,37 @@ const Admin: React.FC = () => {
             setUsernameToUpdate('');
           }}
         >
-          <AdminForm
-            closeCreateForm={() => {
-              setShowCreateForm(false);
-              setUsernameToUpdate('');
-            }}
-            usernameToUpdate={usernameToUpdate}
-          />
+          <React.Suspense fallback={<CircularProgress />}>
+            <AdminForm
+              closeCreateForm={() => {
+                setShowCreateForm(false);
+                setUsernameToUpdate('');
+              }}
+              usernameToUpdate={usernameToUpdate}
+            />
+          </React.Suspense>
         </ModalContent>
       )}
-      <AdminTable
-        admins={admins}
-        handleUpdateAdmin={handleUpdateAdmin}
-        openConfirmDelete={openConfirmDelete}
-      />
+      <React.Suspense fallback={<CircularProgress />}>
+        <AdminTable
+          admins={admins}
+          handleUpdateAdmin={handleUpdateAdmin}
+          openConfirmDelete={openConfirmDelete}
+        />
+      </React.Suspense>
       {showConfirmDelete && adminToDelete && (
         <ModalContent
           title="Are you sure?"
           onClose={() => setShowConfirmDelete(false)}
           open={showConfirmDelete}
         >
-          <AreYouSure
-            onCancel={() => setShowConfirmDelete(false)}
-            message={`Are you sure you want to delete ${adminToDelete}? This action is irreversible.`}
-            onConfirm={handleDeleteAdmin}
-          />
+          <React.Suspense fallback={<CircularProgress />}>
+            <AreYouSure
+              onCancel={() => setShowConfirmDelete(false)}
+              message={`Are you sure you want to delete ${adminToDelete}? This action is irreversible.`}
+              onConfirm={handleDeleteAdmin}
+            />
+          </React.Suspense>
         </ModalContent>
       )}
     </>
